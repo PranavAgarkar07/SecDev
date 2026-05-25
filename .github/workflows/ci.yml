@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-build:
+    name: Lint and Build
+    runs-on: ubuntu-latest
+
+    env:
+      CI: true
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/secdev
+      CLIENT_ID: ci-client-id
+      CLIENT_SECRET: ci-client-secret
+      NEXTAUTH_SECRET: ci-nextauth-secret-32-chars-long
+      NEXTAUTH_URL: http://localhost:3000
+      GROQ_API_KEY: ci-groq-api-key
+      E2B_API_KEY: ci-e2b-api-key
+      INNGEST_EVENT_KEY: ci-inngest-event-key
+      INNGEST_SIGNING_KEY: ci-inngest-signing-key
+      BREVO_API_KEY: ci-brevo-api-key
+      EMAIL_FROM: ci@example.com
+      APP_URL: http://localhost:3000
+      NEXT_PUBLIC_FIREBASE_API_KEY: ci-firebase-api-key
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ci.firebaseapp.com
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: ci-project
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ci.appspot.com
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "1234567890"
+      NEXT_PUBLIC_FIREBASE_APP_ID: ci-app-id
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run build
+        run: npm run build
