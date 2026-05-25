@@ -31,6 +31,7 @@ _A self-learning, self-adaptive security-first deployment platform with autonomo
 - [Environment Variables](#-environment-variables)
 - [Custom Runtime Template](#-custom-runtime-template)
 - [Installation Guide](#-installation-guide)
+- [Contributing & GSSoC](#-contributing--gssoc)
 - [Project File Structure](#-project-file-structure)
 - [Security Architecture Highlights](#-security-architecture-highlights)
 - [Scoring Model](#-scoring-model)
@@ -618,6 +619,19 @@ npx inngest-cli@latest dev
 pnpm build
 pnpm start
 ```
+
+---
+
+## 🤝 Contributing & GSSoC
+
+If you want to contribute to SecDev, start with these project-specific docs:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - setup, branch naming, PR flow, and code style
+- [CONTRIBUTING_GUIDE_GSSOC.md](CONTRIBUTING_GUIDE_GSSOC.md) - GSSoC issue claiming and mentor workflow
+- [GOOD_FIRST_ISSUE.md](GOOD_FIRST_ISSUE.md) - beginner-friendly issues tailored to this repo
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - community behavior expectations
+
+For GitHub issue and PR flows, also use the built-in templates in [.github/ISSUE_TEMPLATE](.github/ISSUE_TEMPLATE) and [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md).
 
 ---
 
