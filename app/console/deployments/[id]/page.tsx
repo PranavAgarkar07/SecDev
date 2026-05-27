@@ -14,6 +14,7 @@ import {
   RotateCcw,
   AlertTriangle,
   WifiOff,
+  ScrollText,
 } from "lucide-react";
 
 const E2B_TIMEOUT_MS = 30 * 60 * 1000;
@@ -85,17 +86,12 @@ export default function Page() {
   // Start/stop polling based on deployment status
   useEffect(() => {
     fetchRecord();
-    pollingRef.current = setInterval(() => {
-      setRecord((prev) => {
-        if (!prev || prev.status === "deploying") {
-          fetchRecord();
-        }
-        return prev;
-      });
-    }, 2_000);
-    return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current);
-    };
+
+    const interval = setInterval(() => {
+      fetchRecord();
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [fetchRecord]);
 
   // Stop polling once deployment settles
@@ -301,10 +297,43 @@ export default function Page() {
               onScroll={handleScroll}
               className="h-[60vh] overflow-y-auto p-4 font-mono text-xs leading-relaxed space-y-0.5"
             >
-              {record.logs.length === 0 && (
-                <p className="text-gray-500 dark:text-zinc-600 italic">
-                  Waiting for logs…
-                </p>
+              {record && record.logs.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-10 text-center text-gray-400 dark:text-zinc-500">
+                  <ScrollText className="w-8 h-8 mb-3 opacity-60" />
+
+                  {record.status === "deploying" && (
+                    <>
+                      <p className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+                        Deployment in progress…
+                      </p>
+                      <p className="text-xs mt-1 max-w-sm">
+                        We’re building your app. Logs will appear as soon as the server starts.
+                      </p>
+                    </>
+                  )}
+
+                  {record.status === "failed" && (
+                    <>
+                      <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+                        Deployment failed before logs were generated
+                      </p>
+                      <p className="text-xs mt-1 max-w-sm">
+                        Check the deployment status above or try redeploying.
+                      </p>
+                    </>
+                  )}
+
+                  {record.status === "live" && (
+                    <>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">
+                        No runtime logs yet
+                      </p>
+                      <p className="text-xs mt-1 max-w-sm">
+                        The app is running, but it hasn’t produced any logs.
+                      </p>
+                    </>
+                  )}
+                </div>
               )}
               {record.logs.map((line, i) => (
                 <div key={i} className={`${LEVEL_STYLE[line.level]} whitespace-pre-wrap break-all`}>
@@ -329,26 +358,24 @@ export default function Page() {
 
           {/* Public URL card — shown as soon as sandbox is created */}
           {record.publicUrl && (
-            <div className={`mt-4 px-4 py-3 border rounded-xl flex items-center justify-between ${
-              record.status === "live"
-                ? "bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20"
-                : record.status === "failed"
+            <div className={`mt-4 px-4 py-3 border rounded-xl flex items-center justify-between ${record.status === "live"
+              ? "bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20"
+              : record.status === "failed"
                 ? "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20"
                 : "bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700"
-            }`}>
+              }`}>
               <div className="min-w-0 flex-1">
-                <p className={`text-xs font-semibold mb-0.5 ${
-                  record.status === "live"
-                    ? "text-green-700 dark:text-green-400"
-                    : record.status === "failed"
+                <p className={`text-xs font-semibold mb-0.5 ${record.status === "live"
+                  ? "text-green-700 dark:text-green-400"
+                  : record.status === "failed"
                     ? "text-red-700 dark:text-red-400"
                     : "text-gray-600 dark:text-zinc-400"
-                }`}>
+                  }`}>
                   {record.status === "live"
                     ? "Deployment is live!"
                     : record.status === "failed"
-                    ? "Deployment failed — URL was allocated:"
-                    : "Preview URL (app starting up…)"}
+                      ? "Deployment failed — URL was allocated:"
+                      : "Preview URL (app starting up…)"}
                 </p>
                 <p className="text-xs font-mono text-gray-600 dark:text-zinc-300 break-all">
                   {record.publicUrl}
@@ -358,11 +385,10 @@ export default function Page() {
                 href={record.publicUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`ml-4 shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  record.status === "live"
-                    ? "text-white bg-green-700 hover:bg-green-800"
-                    : "text-gray-500 dark:text-zinc-400 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600"
-                }`}
+                className={`ml-4 shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${record.status === "live"
+                  ? "text-white bg-green-700 hover:bg-green-800"
+                  : "text-gray-500 dark:text-zinc-400 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600"
+                  }`}
               >
                 <ExternalLink className="w-3 h-3" />
                 Open
