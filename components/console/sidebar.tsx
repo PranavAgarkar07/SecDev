@@ -81,15 +81,13 @@ export function ConsoleSidebar() {
 
   return (
     <aside
-      className={`relative flex flex-col h-full bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 transition-all duration-300 shrink-0 ${
-        collapsed ? "w-14" : "w-56"
-      }`}
+      className={`relative flex flex-col h-full bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 transition-all duration-300 shrink-0 ${collapsed ? "w-14" : "w-56"
+        }`}
     >
       {/* Logo */}
       <div
-        className={`flex items-center gap-2.5 px-3 h-14 border-b border-gray-200 dark:border-zinc-800 shrink-0 ${
-          collapsed ? "justify-center" : ""
-        }`}
+        className={`flex items-center gap-2.5 px-3 h-14 border-b border-gray-200 dark:border-zinc-800 shrink-0 ${collapsed ? "justify-center" : ""
+          }`}
       >
         <SecDevMark className="w-7 h-7 shrink-0" />
         {!collapsed && (
@@ -103,10 +101,14 @@ export function ConsoleSidebar() {
           <div key={group.title} className="mb-1">
             {!collapsed && (
               <button
+                type="button"
                 onClick={() => toggleGroup(group.title)}
-                className="flex items-center justify-between w-full px-2 py-1 text-[10px] font-semibold text-gray-400 dark:text-zinc-600 uppercase tracking-widest hover:text-gray-600 dark:hover:text-zinc-400 transition-colors"
+                aria-expanded={!collapsedGroups[group.title]}
+                aria-controls={`group-${group.title}`}
+                aria-label={`${group.title} section toggle`}
+                className="flex items-center justify-between w-full text-left px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-widest hover:text-gray-600"
               >
-                {group.title}
+                <span>{group.title}</span>
                 {collapsedGroups[group.title] ? (
                   <ChevronDown className="w-3 h-3" />
                 ) : (
@@ -115,7 +117,10 @@ export function ConsoleSidebar() {
               </button>
             )}
             {!collapsedGroups[group.title] && (
-              <div className="space-y-0.5 mt-0.5">
+              <div
+                id={`group-${group.title}`}
+                className="space-y-0.5 mt-0.5"
+              >
                 {group.items.map((item) => {
                   const isActive =
                     pathname === item.href || pathname.startsWith(item.href + "/");
@@ -125,11 +130,10 @@ export function ConsoleSidebar() {
                       key={item.href}
                       href={item.href}
                       title={collapsed ? item.label : undefined}
-                      className={`flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition-colors ${
-                        isActive
-                          ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium"
-                          : "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800"
-                      } ${collapsed ? "justify-center" : ""}`}
+                      className={`flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition-colors ${isActive
+                        ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium"
+                        : "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800"
+                        } ${collapsed ? "justify-center" : ""}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
                       {!collapsed && <span>{item.label}</span>}
@@ -144,8 +148,11 @@ export function ConsoleSidebar() {
 
       {/* Collapse toggle */}
       <button
+        type="button"
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-[4.5rem] w-6 h-6 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-full flex items-center justify-center text-gray-500 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors z-10 shadow-sm"
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-expanded={!collapsed}
+        className="absolute -right-3 top-[4.5rem] w-6 h-6 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-full flex items-center justify-center"
       >
         {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
       </button>
