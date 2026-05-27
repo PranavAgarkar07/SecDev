@@ -32,16 +32,45 @@ Maintainers may ask you to confirm:
 
 If the maintainer asks for a smaller first step, follow that direction before expanding the change.
 
-## Point System
 
-The following point system is recommended for SecDev GSSoC work. Final allocation can be adjusted by the maintainers or GSSoC mentors based on actual complexity.
+## GSSoC Labels & Scoring (Project-specific)
 
-- Easy: 5 points
-- Medium: 10 points
-- Hard: 15 points
+Maintainers use the following labels and scoring rules to award points for merged PRs. Apply the `gssoc:approved` label once a contribution meets the project standards (tests, style, and review).
 
-Use these labels consistently when you open or update issues so contributors can choose tasks that match their comfort level.
+- **gssoc:approved** : +50 pts (base for every approved PR)
 
+Difficulty (pick one):
+
+- **level:beginner** : +20 pts
+- **level:intermediate** : +35 pts
+- **level:advanced** : +55 pts
+- **level:critical** : +80 pts
+
+Quality multiplier (optional):
+
+- **quality:clean** : ×1.2
+- **quality:exceptional** : ×1.5
+
+Type bonus (optional, stackable):
+
+- **type:docs** : +5
+- **type:bug** : +10
+- **type:feature** : +10
+- **type:testing** : +10
+- **type:design** : +10
+- **type:refactor** : +10
+- **type:accessibility** : +15
+- **type:performance** : +15
+- **type:devops** : +15
+- **type:security** : +20
+
+Formula (recommended):
+
+```
+50 + (difficulty × quality) + type bonus
+```
+
+Requirements to award points:
 ## Difficulty Expectations
 
 ### Easy
