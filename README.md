@@ -13,7 +13,14 @@ _A self-learning, self-adaptive security-first deployment platform with autonomo
 [![Inngest](https://img.shields.io/badge/Inngest-Workflows-orange)](https://www.inngest.com/)
 [![Groq](https://img.shields.io/badge/Groq-AI-red)](https://groq.com/)
 
+---
+
 </div>
+
+<p align="center">
+  <img src="public/image.png" alt="SecDev" width="360" style="margin-right:16px" />
+  <img src="public/image1.png" alt="SecDev alt" width="360" />
+</p>
 
 ---
 
