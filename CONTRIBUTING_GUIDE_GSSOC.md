@@ -89,3 +89,48 @@ For SecDev, good contributions are usually small, clear, and useful to the platf
 - Accessibility fixes
 - Security-safe refactors
 - Documentation that helps new users understand deployment, testing, or sandbox behavior
+
+## GSSoC Labels & Scoring (Project-specific)
+
+Maintainers use the following labels and scoring rules to award points for merged PRs. Apply the `gssoc:approved` label once a contribution meets the project standards (tests, style, and review).
+
+- **gssoc:approved** : +50 pts (base for every approved PR)
+
+Difficulty (pick one):
+
+- **level:beginner** : +20 pts
+- **level:intermediate** : +35 pts
+- **level:advanced** : +55 pts
+- **level:critical** : +80 pts
+
+Quality multiplier (optional):
+
+- **quality:clean** : ×1.2
+- **quality:exceptional** : ×1.5
+
+Type bonus (optional, stackable):
+
+- **type:docs** : +5
+- **type:bug** : +10
+- **type:feature** : +10
+- **type:testing** : +10
+- **type:design** : +10
+- **type:refactor** : +10
+- **type:accessibility** : +15
+- **type:performance** : +15
+- **type:devops** : +15
+- **type:security** : +20
+
+Formula (recommended):
+
+```
+50 + (difficulty × quality) + type bonus
+```
+
+Requirements to award points:
+
+- PR must be **merged**
+- At least **one review** approved
+- PR must carry the **gssoc:approved** label (added by maintainers)
+
+Maintainers may adjust final points based on actual impact and implementation quality.
