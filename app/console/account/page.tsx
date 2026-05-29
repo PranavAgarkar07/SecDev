@@ -68,20 +68,23 @@ export default function AccountPage() {
 
           <Field label="Display Name">
             <input
-              defaultValue="Deekshith Gowda"
+              defaultValue=""
+              placeholder="Enter your name"
               className="w-full bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 dark:focus:border-zinc-400 transition-colors"
             />
           </Field>
           <Field label="Email Address" hint="Your email is managed through your authentication provider.">
             <input
-              defaultValue="deekshith@secdev.app"
+              defaultValue=""
+              placeholder="Enter your email"
               readOnly
               className="w-full bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 dark:focus:border-zinc-400 transition-colors"
             />
           </Field>
           <Field label="Username">
             <input
-              defaultValue="deekshithgowda85"
+              defaultValue=""
+              placeholder="Enter your username"
               className="w-full bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 dark:focus:border-zinc-400 transition-colors"
             />
           </Field>
