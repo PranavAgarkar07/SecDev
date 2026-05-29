@@ -96,22 +96,23 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
             <Field label="Display Name">
               <input
-                value={user?.email?.split("@")[0] ?? ""}
-                readOnly
+                defaultValue={user?.email?.split("@")[0] ?? ""}
+                placeholder="Enter your display name"
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
             <Field label="Email Address">
               <input
                 value={user?.email ?? ""}
+                placeholder="Email managed by provider"
                 readOnly
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
-            <Field label="User ID">
+            <Field label="Username">
               <input
-                value={user?.id ?? ""}
-                readOnly
+                defaultValue={user?.id ?? ""}
+                placeholder="Enter your username"
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
