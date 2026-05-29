@@ -1,15 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Bell, Search, ChevronDown, LogOut, User, Settings, Sun, Moon, Github, Rocket } from "lucide-react";
+import { Bell, Search, ChevronDown, LogOut, User, Settings, Sun, Moon, Rocket } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export function ConsoleTopNav() {
   const [userOpen, setUserOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { data: session } = useSession();
 
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -26,10 +25,9 @@ export function ConsoleTopNav() {
 
   const close = () => { setUserOpen(false); };
 
-  // Derive display name and avatar initial from session
-  const displayName = session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "User";
-  const avatarInitial = displayName[0]?.toUpperCase() ?? "U";
-  const avatarImage = session?.user?.image;
+  const displayName = "Account";
+  const avatarInitial = "A";
+  const avatarImage = undefined;
 
   return (
     <header className="flex items-center h-14 px-4 border-b border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm gap-3 shrink-0">
@@ -107,7 +105,7 @@ export function ConsoleTopNav() {
             <div className="absolute top-full right-0 mt-1 w-52 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg z-50 py-1">
               <div className="px-4 py-2.5 border-b border-gray-200 dark:border-zinc-700">
                 <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{displayName}</p>
-                <p className="text-xs text-gray-500 dark:text-zinc-500 truncate">{session?.user?.email ?? "GitHub user"}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500 truncate">Signed in successfully</p>
               </div>
               <Link href="/console/account" onClick={close} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <User className="w-4 h-4" />Account
@@ -115,14 +113,6 @@ export function ConsoleTopNav() {
               <Link href="/console/settings" onClick={close} className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <Settings className="w-4 h-4" />Settings
               </Link>
-              {!session && (
-                <button
-                  onClick={() => { signIn("github", { callbackUrl: "/console/dashboard" }); close(); }}
-                  className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  <Github className="w-4 h-4" />Sign in with GitHub
-                </button>
-              )}
               <div className="border-t border-gray-200 dark:border-zinc-700 mt-1 pt-1">
                 <button
                   onClick={() => { signOut({ callbackUrl: "/" }); close(); }}
