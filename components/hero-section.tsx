@@ -231,14 +231,14 @@ export function HeroSection() {
                             ...transitionVariants,
                         }}>
                         <div className="relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
-                            <div
-                                aria-hidden
-                                className="bg-gradient-to-b to-background absolute inset-0 z-10 from-transparent from-35%"
-                            />
-                            <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-5xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
-                                <DashboardPreview />
-                            </div>
-                        </div>
+    <div
+        aria-hidden
+        className="hidden dark:block bg-gradient-to-b to-background absolute inset-0 z-10 from-transparent from-35%"
+    />
+    <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-5xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
+        <DashboardPreview />
+    </div>
+</div>
                     </AnimatedGroup>
                 </div>
             </section>
