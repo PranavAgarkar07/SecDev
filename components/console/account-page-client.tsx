@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Github, User, Lock, ShieldAlert, Camera, Check, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import type { UserProfile } from "@/lib/user-auth";
 
 function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
@@ -44,6 +44,10 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
   const [deleteInput, setDeleteInput] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
   const [pwSaved, setPwSaved] = useState(false);
+  
+  // Account destruction state handlers
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const saveProfile = () => {
     setProfileSaved(true);
@@ -55,12 +59,51 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
     setTimeout(() => setPwSaved(false), 2000);
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteInput !== "delete my account") return;
+
+    // Direct user-intent safety gate validation matching Issue instructions
+    const doubleConfirm = window.confirm(
+      "CRITICAL WARNING: Are you completely sure you want to delete your account? This will instantly purge all sandboxes, deployments, security logs, and custom configuration secrets permanently."
+    );
+    if (!doubleConfirm) return;
+
+    setDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const res = await fetch("/api/user/account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        alert("Your account has been successfully deleted. Goodbye!");
+        // Safely wipe out NextAuth browser session states and redirect to registration index page
+        signOut({ callbackUrl: "/" });
+      } else {
+        setDeleteError(data.error ?? "Failed to delete account. Please try again.");
+      }
+    } catch {
+      setDeleteError("Network error occurred. Unable to connect to authentication server.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-2xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
           <p className="mt-0.5 text-sm text-gray-500 dark:text-zinc-500">Manage your profile and security settings</p>
         </div>
+
+        {deleteError && (
+          <div className="px-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-sm text-red-700 dark:text-red-400">
+            {deleteError}
+          </div>
+        )}
 
         <Section title="Profile" icon={<User className="h-4 w-4" />}>
           <div className="space-y-5">
@@ -223,20 +266,22 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
           <Field label='Type "delete my account" to confirm'>
             <input
               value={deleteInput}
+              disabled={deleting}
               onChange={(e) => setDeleteInput(e.target.value)}
               placeholder='delete my account'
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-red-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
             />
           </Field>
           <button
-            disabled={deleteInput !== "delete my account"}
+            onClick={handleDeleteAccount}
+            disabled={deleteInput !== "delete my account" || deleting}
             className={`mt-4 rounded-lg px-5 py-2 text-sm font-medium transition-colors ${
-              deleteInput === "delete my account"
+              deleteInput === "delete my account" && !deleting
                 ? "bg-red-600 text-white hover:bg-red-500"
                 : "cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-zinc-800 dark:text-zinc-600"
             }`}
           >
-            Delete My Account
+            {deleting ? "Deleting Account..." : "Delete My Account"}
           </button>
         </div>
     </div>
