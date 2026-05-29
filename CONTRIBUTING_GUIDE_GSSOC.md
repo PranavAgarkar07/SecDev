@@ -32,16 +32,6 @@ Maintainers may ask you to confirm:
 
 If the maintainer asks for a smaller first step, follow that direction before expanding the change.
 
-## Point System
-
-The following point system is recommended for SecDev GSSoC work. Final allocation can be adjusted by the maintainers or GSSoC mentors based on actual complexity.
-
-- Easy: 5 points
-- Medium: 10 points
-- Hard: 15 points
-
-Use these labels consistently when you open or update issues so contributors can choose tasks that match their comfort level.
-
 ## Difficulty Expectations
 
 ### Easy

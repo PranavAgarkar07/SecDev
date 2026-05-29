@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Github, AlertCircle, PackageOpen, LayoutGrid, List } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { RepositoryCard, type GitHubRepo } from "./repository-card";
 import { RepositoryTable } from "./repository-table";
 
@@ -134,14 +135,15 @@ export function RepositoryList({
           Connect your GitHub account
         </p>
         <p className="text-xs text-gray-500 dark:text-zinc-500 mb-4 max-w-xs">
-          Sign in with GitHub to fetch your repositories and enable one-click deployments.
+          Connect GitHub to fetch your repositories and enable one-click deployments.
         </p>
-        <a
-          href="/login"
+        <button
+          type="button"
+          onClick={() => signIn("github", { callbackUrl: "/console/github" })}
           className="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 rounded-lg transition-colors"
         >
-          Sign in with GitHub
-        </a>
+          Connect GitHub
+        </button>
       </div>
     );
   }
