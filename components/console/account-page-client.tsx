@@ -37,6 +37,8 @@ function formatCreatedAt(createdAt: number): string {
 }
 
 export function AccountPageClient({ user, hasGithubConnection }: { user: UserProfile | null; hasGithubConnection: boolean }) {
+  const [displayName, setDisplayName] = useState(user?.name ?? user?.email?.split("@")[0] ?? "");
+  const [username, setUsername] = useState(user?.id ?? "");
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
@@ -77,6 +79,7 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
       if (res.ok && data.ok) {
         alert("Your account has been successfully deleted. Goodbye!");
+        // Safely wipe out NextAuth browser session states and redirect to registration index page
         signOut({ callbackUrl: "/" });
       } else {
         setDeleteError(data.error ?? "Failed to delete account. Please try again.");
@@ -142,22 +145,25 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
             <Field label="Display Name">
               <input
-                value={user?.email?.split("@")[0] ?? ""}
-                readOnly
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Enter your display name"
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
             <Field label="Email Address">
               <input
                 value={user?.email ?? ""}
+                placeholder="Email managed by provider"
                 readOnly
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
-            <Field label="User ID">
+            <Field label="Username">
               <input
-                value={user?.id ?? ""}
-                readOnly
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-gray-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-400"
               />
             </Field>
