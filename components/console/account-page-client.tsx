@@ -62,7 +62,6 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
   const handleDeleteAccount = async () => {
     if (deleteInput !== "delete my account") return;
 
-    // Direct user-intent safety gate validation matching Issue instructions
     const doubleConfirm = window.confirm(
       "CRITICAL WARNING: Are you completely sure you want to delete your account? This will instantly purge all sandboxes, deployments, security logs, and custom configuration secrets permanently."
     );
@@ -124,18 +123,23 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
               </div>
             )}
 
+            {/* Fixed Avatar Element: Semantic button wrapper with keyboard focus accessibility */}
             <div className="flex items-center gap-4">
-              <div className="group relative cursor-pointer">
+              <button
+                type="button"
+                aria-label="Change account avatar"
+                className="group relative focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white rounded-full transition-shadow"
+              >
                 <div className="flex h-16 w-16 select-none items-center justify-center rounded-full bg-gray-900 text-2xl font-bold text-white dark:bg-white dark:text-gray-900">
                   {user?.email?.[0]?.toUpperCase() ?? "U"}
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
                   <Camera className="h-5 w-5 text-white" />
                 </div>
-              </div>
+              </button>
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-zinc-200">Account Avatar</p>
-                <p className="text-xs text-gray-500 dark:text-zinc-500">Use a generic avatar for privacy.</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">Click avatar badge to update graphics controls.</p>
               </div>
             </div>
 
