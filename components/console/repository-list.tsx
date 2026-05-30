@@ -184,6 +184,7 @@ export function RepositoryList({
         <div className="flex items-center gap-3">
           <input
             type="text"
+            aria-label="Search repositories"
             placeholder="Search repositories…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
