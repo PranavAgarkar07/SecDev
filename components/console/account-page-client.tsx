@@ -49,6 +49,12 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // Dynamic Session Management State (Fixes #44)
+  const [sessions, setSessions] = useState([
+    { id: "chrome-macos", device: "Chrome on macOS", loc: "Bengaluru, IN", current: true },
+    { id: "vscode-ext", device: "VS Code Extension", loc: "Bengaluru, IN", current: false },
+  ]);
+
   const saveProfile = () => {
     setProfileSaved(true);
     setTimeout(() => setProfileSaved(false), 2000);
@@ -57,6 +63,27 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
   const savePw = () => {
     setPwSaved(true);
     setTimeout(() => setPwSaved(false), 2000);
+  };
+
+  const handleRevokeSession = async (id: string, device: string) => {
+    if (!window.confirm(`Are you sure you want to terminate your active session on "${device}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/user/sessions?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setSessions((prev) => prev.filter((s) => s.id !== id));
+      } else {
+        alert(data.error ?? "Failed to revoke active session.");
+      }
+    } catch {
+      alert("Network error occurred while trying to terminate connection session.");
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -79,7 +106,6 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
       if (res.ok && data.ok) {
         alert("Your account has been successfully deleted. Goodbye!");
-        // Safely wipe out NextAuth browser session states and redirect to registration index page
         signOut({ callbackUrl: "/" });
       } else {
         setDeleteError(data.error ?? "Failed to delete account. Please try again.");
@@ -238,11 +264,8 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
         <Section title="Active Sessions" icon={<Lock className="h-4 w-4" />}>
           <div className="space-y-3">
-            {[
-              { device: "Chrome on macOS", loc: "Bengaluru, IN", current: true },
-              { device: "VS Code Extension", loc: "Bengaluru, IN", current: false },
-            ].map((s) => (
-              <div key={s.device} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-zinc-800">
+            {sessions.map((s) => (
+              <div key={s.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-zinc-800">
                 <div>
                   <p className="text-sm font-medium text-gray-800 dark:text-zinc-200">{s.device}</p>
                   <p className="text-xs text-gray-500 dark:text-zinc-500">{s.loc}</p>
@@ -252,7 +275,12 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
                     Current
                   </span>
                 ) : (
-                  <button className="text-xs text-red-500 transition-colors hover:text-red-600">Revoke</button>
+                  <button 
+                    onClick={() => handleRevokeSession(s.id, s.device)}
+                    className="text-xs text-red-500 transition-colors hover:text-red-600 font-semibold"
+                  >
+                    Revoke
+                  </button>
                 )}
               </div>
             ))}
@@ -270,7 +298,6 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
           <Field label='Type "delete my account" to confirm'>
             <input
               value={deleteInput}
-              disabled={deleting}
               onChange={(e) => setDeleteInput(e.target.value)}
               placeholder='delete my account'
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-red-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
