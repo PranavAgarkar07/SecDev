@@ -184,6 +184,7 @@ export function RepositoryList({
         <div className="flex items-center gap-3">
           <input
             type="text"
+            aria-label="Search repositories"
             placeholder="Search repositories…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -232,7 +233,9 @@ export function RepositoryList({
       {loading && (
         view === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={`repo-skeleton-card-${i}`} />
+            ))}
           </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-zinc-800">
@@ -247,7 +250,9 @@ export function RepositoryList({
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-zinc-900">
-                {Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)}
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonRow key={`repo-skeleton-row-${i}`} />
+                ))}
               </tbody>
             </table>
           </div>

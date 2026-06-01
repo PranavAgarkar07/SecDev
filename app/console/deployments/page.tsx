@@ -71,6 +71,11 @@ export default function Page() {
   }, []);
 
   const handleKill = async (sandboxId: string) => {
+    // Safety check confirmation added here
+    if (!window.confirm("Are you sure you want to stop and terminate this sandbox?")) {
+      return;
+    }
+
     setKillingId(sandboxId);
     try {
       const res = await fetch(`/api/deploy/${sandboxId}`, { method: "DELETE" });
@@ -86,6 +91,11 @@ export default function Page() {
   };
 
   const handleRedeploy = async (sandboxId: string) => {
+    // Safety check confirmation added here
+    if (!window.confirm("Are you sure you want to redeploy this application?")) {
+      return;
+    }
+
     setRedeployingId(sandboxId);
     try {
       const res = await fetch(`/api/deploy/${sandboxId}`, { method: "POST" });
