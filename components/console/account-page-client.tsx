@@ -49,6 +49,12 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // Dynamic Session Management State (Fixes #44)
+  const [sessions, setSessions] = useState([
+    { id: "chrome-macos", device: "Chrome on macOS", loc: "Bengaluru, IN", current: true },
+    { id: "vscode-ext", device: "VS Code Extension", loc: "Bengaluru, IN", current: false },
+  ]);
+
   const saveProfile = () => {
     setProfileSaved(true);
     setTimeout(() => setProfileSaved(false), 2000);
@@ -59,10 +65,30 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
     setTimeout(() => setPwSaved(false), 2000);
   };
 
+  const handleRevokeSession = async (id: string, device: string) => {
+    if (!window.confirm(`Are you sure you want to terminate your active session on "${device}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/user/sessions?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setSessions((prev) => prev.filter((s) => s.id !== id));
+      } else {
+        alert(data.error ?? "Failed to revoke active session.");
+      }
+    } catch {
+      alert("Network error occurred while trying to terminate connection session.");
+    }
+  };
+
   const handleDeleteAccount = async () => {
     if (deleteInput !== "delete my account") return;
 
-    // Direct user-intent safety gate validation matching Issue instructions
     const doubleConfirm = window.confirm(
       "CRITICAL WARNING: Are you completely sure you want to delete your account? This will instantly purge all sandboxes, deployments, security logs, and custom configuration secrets permanently."
     );
@@ -80,7 +106,6 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
       if (res.ok && data.ok) {
         alert("Your account has been successfully deleted. Goodbye!");
-        // Safely wipe out NextAuth browser session states and redirect to registration index page
         signOut({ callbackUrl: "/" });
       } else {
         setDeleteError(data.error ?? "Failed to delete account. Please try again.");
@@ -124,18 +149,23 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
               </div>
             )}
 
+            {/* Fixed Avatar Element: Semantic button wrapper with keyboard focus accessibility */}
             <div className="flex items-center gap-4">
-              <div className="group relative cursor-pointer">
+              <button
+                type="button"
+                aria-label="Change account avatar"
+                className="group relative focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white rounded-full transition-shadow"
+              >
                 <div className="flex h-16 w-16 select-none items-center justify-center rounded-full bg-gray-900 text-2xl font-bold text-white dark:bg-white dark:text-gray-900">
                   {user?.email?.[0]?.toUpperCase() ?? "U"}
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
                   <Camera className="h-5 w-5 text-white" />
                 </div>
-              </div>
+              </button>
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-zinc-200">Account Avatar</p>
-                <p className="text-xs text-gray-500 dark:text-zinc-500">Use a generic avatar for privacy.</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">Click avatar badge to update graphics controls.</p>
               </div>
             </div>
 
@@ -234,11 +264,8 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
 
         <Section title="Active Sessions" icon={<Lock className="h-4 w-4" />}>
           <div className="space-y-3">
-            {[
-              { device: "Chrome on macOS", loc: "Bengaluru, IN", current: true },
-              { device: "VS Code Extension", loc: "Bengaluru, IN", current: false },
-            ].map((s) => (
-              <div key={s.device} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-zinc-800">
+            {sessions.map((s) => (
+              <div key={s.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-zinc-800">
                 <div>
                   <p className="text-sm font-medium text-gray-800 dark:text-zinc-200">{s.device}</p>
                   <p className="text-xs text-gray-500 dark:text-zinc-500">{s.loc}</p>
@@ -248,7 +275,12 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
                     Current
                   </span>
                 ) : (
-                  <button className="text-xs text-red-500 transition-colors hover:text-red-600">Revoke</button>
+                  <button 
+                    onClick={() => handleRevokeSession(s.id, s.device)}
+                    className="text-xs text-red-500 transition-colors hover:text-red-600 font-semibold"
+                  >
+                    Revoke
+                  </button>
                 )}
               </div>
             ))}
@@ -266,7 +298,6 @@ export function AccountPageClient({ user, hasGithubConnection }: { user: UserPro
           <Field label='Type "delete my account" to confirm'>
             <input
               value={deleteInput}
-              disabled={deleting}
               onChange={(e) => setDeleteInput(e.target.value)}
               placeholder='delete my account'
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 transition-colors focus:border-red-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
